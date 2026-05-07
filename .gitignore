@@ -1,0 +1,35 @@
+# ── Entorno virtual ──────────────────────────────────────────
+munoz/
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Django ───────────────────────────────────────────────────
+*.sqlite3
+*.log
+local_settings.py
+/media/
+/staticfiles/
+/static_root/
+
+# ── Variables de entorno / secretos ──────────────────────────
+.env
+.env.*
+*.env
+
+# ── IDEs ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

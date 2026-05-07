@@ -1,0 +1,40 @@
+{% extends 'control/base.html' %}
+{% block title %}Registrar Entrada{% endblock %}
+{% block page_title %}<i class="bi bi-box-arrow-in-right me-2 text-success"></i>Registrar Entrada{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm" style="border-radius:12px;">
+      <div class="card-header border-0 py-3" style="background:#d1fae5;border-radius:12px 12px 0 0;">
+        <h5 class="mb-0 text-success fw-semibold">
+          <i class="bi bi-person-check me-2"></i>Nueva Entrada de Personal
+        </h5>
+        <p class="mb-0 small text-muted mt-1">La hora de entrada se registrará automáticamente.</p>
+      </div>
+      <div class="card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label class="form-label fw-semibold">{{ form.personal.label }}</label>
+            {{ form.personal }}
+            {% if form.personal.errors %}
+              <div class="text-danger small mt-1">{{ form.personal.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold">{{ form.observaciones.label }}</label>
+            {{ form.observaciones }}
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success px-4 fw-semibold">
+              <i class="bi bi-check-circle me-2"></i>Registrar Entrada
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

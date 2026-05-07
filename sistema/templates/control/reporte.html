@@ -1,0 +1,102 @@
+{% extends 'control/base.html' %}
+{% block title %}Reporte de Movimientos{% endblock %}
+{% block page_title %}<i class="bi bi-file-earmark-bar-graph me-2"></i>Reporte de Movimientos{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+  <div class="card-body p-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-funnel me-2"></i>Filtros del reporte</h6>
+    <form method="get">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">{{ form.fecha_inicio.label }}</label>
+          {{ form.fecha_inicio }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">{{ form.fecha_fin.label }}</label>
+          {{ form.fecha_fin }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">{{ form.nombre.label }}</label>
+          {{ form.nombre }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">{{ form.motivo.label }}</label>
+          {{ form.motivo }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">{{ form.area.label }}</label>
+          {{ form.area }}
+        </div>
+        <div class="col-md-9 d-flex align-items-end gap-2 flex-wrap">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-search me-1"></i>Filtrar
+          </button>
+          <a href="{% url 'reporte_movimientos' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle me-1"></i>Limpiar
+          </a>
+          <button type="submit" name="exportar" value="1" class="btn btn-success px-4">
+            <i class="bi bi-file-earmark-excel me-1"></i>Exportar CSV
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Tabla -->
+<div class="table-card">
+  <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+    <h6 class="mb-0 fw-semibold">
+      Movimientos <span class="badge bg-secondary ms-2">{{ registros|length }}</span>
+    </h6>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Personal</th>
+          <th>Cargo</th>
+          <th>Hora Entrada</th>
+          <th>Hora Salida</th>
+          <th>Motivo</th>
+          <th>Área Destino</th>
+          <th>Registrado por</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entrada in registros %}
+        <tr>
+          <td class="text-muted small">{{ forloop.counter }}</td>
+          <td class="fw-semibold">{{ entrada.personal }}</td>
+          <td class="small text-muted">{{ entrada.personal.get_cargo_display }}</td>
+          <td class="small">{{ entrada.hora_entrada|date:"d/m/Y H:i" }}</td>
+          <td class="small">
+            {% if entrada.salida %}{{ entrada.salida.hora_salida|date:"d/m/Y H:i" }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td class="small">
+            {% if entrada.salida %}{{ entrada.salida.get_motivo_display }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td class="small">
+            {% if entrada.salida %}{{ entrada.salida.area_destino.nombre }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td class="small text-muted">{{ entrada.registrado_por.get_full_name|default:entrada.registrado_por.username }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+            No hay movimientos en el rango seleccionado.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

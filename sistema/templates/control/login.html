@@ -1,0 +1,42 @@
+{% extends 'control/base.html' %}
+
+{% block title %}Iniciar Sesión - Control de Seguridad{% endblock %}
+
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1a3a5c 0%, #2e86de 100%);">
+  <div class="card shadow-lg border-0" style="width: 100%; max-width: 420px; border-radius: 16px;">
+    <div class="card-body p-5">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+             style="width:64px;height:64px;background:#1a3a5c;">
+          <i class="bi bi-shield-lock-fill text-white fs-3"></i>
+        </div>
+        <h4 class="fw-bold text-dark mb-0">Control de Seguridad</h4>
+        <p class="text-muted small mt-1">Sistema de Control de Entrada y Salida</p>
+      </div>
+
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-danger py-2 small">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">Usuario</label>
+          {{ form.username }}
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold small">Contraseña</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold"
+                style="background:#1a3a5c;border-color:#1a3a5c;">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

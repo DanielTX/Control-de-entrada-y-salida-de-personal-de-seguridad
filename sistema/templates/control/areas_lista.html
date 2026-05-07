@@ -1,0 +1,41 @@
+{% extends 'control/base.html' %}
+{% block title %}Áreas{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2"></i>Gestión de Áreas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'crear_area' %}" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i>Nueva Área
+  </a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for area in areas %}
+        <tr>
+          <td class="fw-semibold">{{ area.nombre }}</td>
+          <td class="text-muted small">{{ area.descripcion|default:"—" }}</td>
+          <td>
+            {% if area.activa %}
+              <span class="badge badge-activo">Activa</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactiva</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center text-muted py-4">No hay áreas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

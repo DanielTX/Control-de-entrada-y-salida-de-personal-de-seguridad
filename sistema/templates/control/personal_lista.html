@@ -1,0 +1,45 @@
+{% extends 'control/base.html' %}
+{% block title %}Personal{% endblock %}
+{% block page_title %}<i class="bi bi-people me-2"></i>Gestión de Personal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'crear_personal' %}" class="btn btn-primary">
+    <i class="bi bi-person-plus me-2"></i>Nuevo Personal
+  </a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Apellido</th>
+          <th>Nombre</th>
+          <th>DNI</th>
+          <th>Cargo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in personal %}
+        <tr>
+          <td class="fw-semibold">{{ p.apellido }}</td>
+          <td>{{ p.nombre }}</td>
+          <td class="text-muted">{{ p.dni }}</td>
+          <td>{{ p.get_cargo_display }}</td>
+          <td>
+            {% if p.activo %}
+              <span class="badge badge-activo">Activo</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactivo</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">No hay personal registrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

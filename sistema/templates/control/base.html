@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Control de Entrada y Salida{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --sidebar-width: 240px;
+      --primary: #1a3a5c;
+      --accent: #2e86de;
+    }
+    body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+
+    /* Sidebar */
+    #sidebar {
+      width: var(--sidebar-width);
+      min-height: 100vh;
+      background: var(--primary);
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      transition: width .25s;
+    }
+    #sidebar .brand {
+      padding: 1.2rem 1rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    #sidebar .nav-link {
+      color: rgba(255,255,255,.75);
+      padding: .6rem 1.2rem;
+      border-radius: 6px;
+      margin: 2px 8px;
+      font-size: .9rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    #sidebar .nav-link:hover, #sidebar .nav-link.active {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+    }
+    #sidebar .nav-section {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,.4);
+      padding: .8rem 1.2rem .2rem;
+    }
+
+    /* Main content */
+    #main { margin-left: var(--sidebar-width); min-height: 100vh; }
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: .75rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar .page-title { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
+    .content-area { padding: 1.5rem; }
+
+    /* Cards */
+    .stat-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+    .stat-card .icon-box {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    /* Tables */
+    .table-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      overflow: hidden;
+    }
+    .table thead th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 500;
+      font-size: .85rem;
+      border: none;
+    }
+    .table tbody tr:hover { background: #f8fafc; }
+
+    /* Badges */
+    .badge-entrada { background: #d1fae5; color: #065f46; }
+    .badge-salida  { background: #fee2e2; color: #991b1b; }
+    .badge-activo  { background: #dbeafe; color: #1e40af; }
+  </style>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="brand">
+    <i class="bi bi-shield-lock-fill fs-5"></i>
+    <span>Control Seguridad</span>
+  </div>
+  <ul class="nav flex-column mt-2">
+    <li class="nav-item">
+      <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+    </li>
+
+    <div class="nav-section">Registros</div>
+    <li class="nav-item">
+      <a href="{% url 'registrar_entrada' %}" class="nav-link {% if request.resolver_match.url_name == 'registrar_entrada' %}active{% endif %}">
+        <i class="bi bi-box-arrow-in-right"></i> Registrar Entrada
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'registrar_salida' %}" class="nav-link {% if request.resolver_match.url_name == 'registrar_salida' %}active{% endif %}">
+        <i class="bi bi-box-arrow-right"></i> Registrar Salida
+      </a>
+    </li>
+
+    <div class="nav-section">Consultas</div>
+    <li class="nav-item">
+      <a href="{% url 'consulta_registros' %}" class="nav-link {% if request.resolver_match.url_name == 'consulta_registros' %}active{% endif %}">
+        <i class="bi bi-search"></i> Consultar Registros
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'reporte_movimientos' %}" class="nav-link {% if request.resolver_match.url_name == 'reporte_movimientos' %}active{% endif %}">
+        <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+      </a>
+    </li>
+
+    {% if user.is_superuser or user.perfil.rol == 'administrador' %}
+    <div class="nav-section">Administración</div>
+    <li class="nav-item">
+      <a href="{% url 'lista_personal' %}" class="nav-link {% if 'personal' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-people"></i> Personal
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'lista_areas' %}" class="nav-link {% if 'area' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-building"></i> Áreas
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/admin/" class="nav-link">
+        <i class="bi bi-gear"></i> Panel Admin
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="topbar">
+    <span class="page-title">{% block page_title %}{% endblock %}</span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-muted small">
+        <i class="bi bi-person-circle me-1"></i>
+        {{ user.get_full_name|default:user.username }}
+        {% if not user.is_superuser %}
+          <span class="badge bg-secondary ms-1">{{ user.perfil.get_rol_display }}</span>
+        {% else %}
+          <span class="badge bg-danger ms-1">Superusuario</span>
+        {% endif %}
+      </span>
+      <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+
+  <div class="content-area">
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
