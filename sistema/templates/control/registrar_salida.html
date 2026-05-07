@@ -3,46 +3,70 @@
 {% block page_title %}<i class="bi bi-box-arrow-right me-2 text-danger"></i>Registrar Salida{% endblock %}
 
 {% block content %}
+<style>
+  .form-card {
+    animation: fadeUp .5s cubic-bezier(0.16,1,.3,1) both;
+    border-radius: 14px;
+  }
+  .form-field {
+    opacity: 0;
+    animation: fadeUp .4s cubic-bezier(0.16,1,.3,1) forwards;
+  }
+  .form-field:nth-child(1) { animation-delay: .2s; }
+  .form-field:nth-child(2) { animation-delay: .28s; }
+  .form-field:nth-child(3) { animation-delay: .36s; }
+  .form-field:nth-child(4) { animation-delay: .44s; }
+  .form-field:nth-child(5) { animation-delay: .52s; }
+
+  .btn-submit-salida:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(220,53,69,.35);
+  }
+</style>
+
 <div class="row justify-content-center">
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm" style="border-radius:12px;">
-      <div class="card-header border-0 py-3" style="background:#fee2e2;border-radius:12px 12px 0 0;">
+    <div class="card border-0 shadow-sm form-card">
+      <div class="card-header border-0 py-3" style="background:#fee2e2;border-radius:14px 14px 0 0;">
         <h5 class="mb-0 text-danger fw-semibold">
           <i class="bi bi-door-open me-2"></i>Registrar Salida de Personal
         </h5>
         <p class="mb-0 small text-muted mt-1">Solo se muestran entradas sin salida registrada.</p>
       </div>
       <div class="card-body p-4">
-        <form method="post">
+        <form method="post" id="salidaForm">
           {% csrf_token %}
-          <div class="mb-3">
+          <div class="mb-3 form-field">
             <label class="form-label fw-semibold">{{ form.entrada.label }}</label>
             {{ form.entrada }}
             {% if form.entrada.errors %}
               <div class="text-danger small mt-1">{{ form.entrada.errors }}</div>
             {% endif %}
           </div>
-          <div class="mb-3">
+          <div class="mb-3 form-field">
             <label class="form-label fw-semibold">{{ form.motivo.label }} <span class="text-danger">*</span></label>
             {{ form.motivo }}
             {% if form.motivo.errors %}
               <div class="text-danger small mt-1">{{ form.motivo.errors }}</div>
             {% endif %}
           </div>
-          <div class="mb-3">
+          <div class="mb-3 form-field">
             <label class="form-label fw-semibold">{{ form.area_destino.label }} <span class="text-danger">*</span></label>
             {{ form.area_destino }}
             {% if form.area_destino.errors %}
               <div class="text-danger small mt-1">{{ form.area_destino.errors }}</div>
             {% endif %}
           </div>
-          <div class="mb-4">
+          <div class="mb-4 form-field">
             <label class="form-label fw-semibold">{{ form.observaciones.label }}</label>
             {{ form.observaciones }}
           </div>
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-danger px-4 fw-semibold">
-              <i class="bi bi-check-circle me-2"></i>Registrar Salida
+          <div class="d-flex gap-2 form-field">
+            <button type="submit" class="btn btn-danger px-4 fw-semibold btn-submit-salida" id="submitSalida">
+              <span id="salidaBtnText"><i class="bi bi-check-circle me-2"></i>Registrar Salida</span>
+              <span id="salidaBtnSpinner" class="d-none">
+                <span class="spinner-border spinner-border-sm me-2"></span>Registrando...
+              </span>
             </button>
             <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
           </div>
@@ -51,4 +75,14 @@
     </div>
   </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.getElementById('salidaForm').addEventListener('submit', function() {
+  document.getElementById('salidaBtnText').classList.add('d-none');
+  document.getElementById('salidaBtnSpinner').classList.remove('d-none');
+  document.getElementById('submitSalida').disabled = true;
+});
+</script>
+{% endblock %}
 {% endblock %}

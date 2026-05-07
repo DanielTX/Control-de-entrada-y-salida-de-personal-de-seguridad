@@ -3,32 +3,62 @@
 {% block page_title %}<i class="bi bi-box-arrow-in-right me-2 text-success"></i>Registrar Entrada{% endblock %}
 
 {% block content %}
+<style>
+  .form-card {
+    animation: fadeUp .5s cubic-bezier(0.16,1,.3,1) both;
+    border-radius: 14px;
+  }
+  .form-card .card-header {
+    animation: slideInRight .4s .15s cubic-bezier(0.16,1,.3,1) both;
+    opacity: 0;
+  }
+  .form-field {
+    opacity: 0;
+    animation: fadeUp .4s cubic-bezier(0.16,1,.3,1) forwards;
+  }
+  .form-field:nth-child(1) { animation-delay: .2s; }
+  .form-field:nth-child(2) { animation-delay: .3s; }
+  .form-field:nth-child(3) { animation-delay: .4s; }
+
+  /* Icono de check animado al enviar */
+  .btn-submit-entrada {
+    transition: transform .2s cubic-bezier(0.34,1.56,.64,1), box-shadow .2s;
+  }
+  .btn-submit-entrada:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(25,135,84,.35);
+  }
+</style>
+
 <div class="row justify-content-center">
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm" style="border-radius:12px;">
-      <div class="card-header border-0 py-3" style="background:#d1fae5;border-radius:12px 12px 0 0;">
+    <div class="card border-0 shadow-sm form-card">
+      <div class="card-header border-0 py-3" style="background:#d1fae5;border-radius:14px 14px 0 0;">
         <h5 class="mb-0 text-success fw-semibold">
           <i class="bi bi-person-check me-2"></i>Nueva Entrada de Personal
         </h5>
         <p class="mb-0 small text-muted mt-1">La hora de entrada se registrará automáticamente.</p>
       </div>
       <div class="card-body p-4">
-        <form method="post">
+        <form method="post" id="entradaForm">
           {% csrf_token %}
-          <div class="mb-4">
+          <div class="mb-4 form-field">
             <label class="form-label fw-semibold">{{ form.personal.label }}</label>
             {{ form.personal }}
             {% if form.personal.errors %}
               <div class="text-danger small mt-1">{{ form.personal.errors }}</div>
             {% endif %}
           </div>
-          <div class="mb-4">
+          <div class="mb-4 form-field">
             <label class="form-label fw-semibold">{{ form.observaciones.label }}</label>
             {{ form.observaciones }}
           </div>
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-success px-4 fw-semibold">
-              <i class="bi bi-check-circle me-2"></i>Registrar Entrada
+          <div class="d-flex gap-2 form-field">
+            <button type="submit" class="btn btn-success px-4 fw-semibold btn-submit-entrada" id="submitEntrada">
+              <span id="entradaBtnText"><i class="bi bi-check-circle me-2"></i>Registrar Entrada</span>
+              <span id="entradaBtnSpinner" class="d-none">
+                <span class="spinner-border spinner-border-sm me-2"></span>Registrando...
+              </span>
             </button>
             <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
           </div>
@@ -37,4 +67,14 @@
     </div>
   </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.getElementById('entradaForm').addEventListener('submit', function() {
+  document.getElementById('entradaBtnText').classList.add('d-none');
+  document.getElementById('entradaBtnSpinner').classList.remove('d-none');
+  document.getElementById('submitEntrada').disabled = true;
+});
+</script>
+{% endblock %}
 {% endblock %}

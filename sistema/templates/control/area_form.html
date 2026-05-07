@@ -3,22 +3,41 @@
 {% block page_title %}<i class="bi bi-building me-2"></i>{{ titulo }}{% endblock %}
 
 {% block content %}
+<style>
+  .form-card { animation: fadeUp .5s cubic-bezier(0.16,1,.3,1) both; border-radius:14px; }
+  .form-field {
+    opacity: 0;
+    animation: fadeUp .4s cubic-bezier(0.16,1,.3,1) forwards;
+  }
+  .form-field:nth-child(1) { animation-delay: .15s; }
+  .form-field:nth-child(2) { animation-delay: .25s; }
+  .form-field:nth-child(3) { animation-delay: .35s; }
+  .form-field:nth-child(4) { animation-delay: .45s; }
+  .btn-save:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(13,110,253,.3);
+  }
+</style>
+
 <div class="row justify-content-center">
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm" style="border-radius:12px;">
+    <div class="card border-0 shadow-sm form-card">
       <div class="card-body p-4">
-        <form method="post">
+        <form method="post" id="areaForm">
           {% csrf_token %}
           {% for field in form %}
-          <div class="mb-3">
+          <div class="mb-3 form-field">
             <label class="form-label fw-semibold small">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
           </div>
           {% endfor %}
-          <div class="d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary px-4">
-              <i class="bi bi-save me-2"></i>Guardar
+          <div class="d-flex gap-2 mt-4 form-field">
+            <button type="submit" class="btn btn-primary px-4 btn-save" id="saveArea">
+              <span id="areaBtnText"><i class="bi bi-save me-2"></i>Guardar</span>
+              <span id="areaBtnSpinner" class="d-none">
+                <span class="spinner-border spinner-border-sm me-2"></span>Guardando...
+              </span>
             </button>
             <a href="{% url 'lista_areas' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
           </div>
@@ -27,4 +46,14 @@
     </div>
   </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.getElementById('areaForm').addEventListener('submit', function() {
+  document.getElementById('areaBtnText').classList.add('d-none');
+  document.getElementById('areaBtnSpinner').classList.remove('d-none');
+  document.getElementById('saveArea').disabled = true;
+});
+</script>
+{% endblock %}
 {% endblock %}

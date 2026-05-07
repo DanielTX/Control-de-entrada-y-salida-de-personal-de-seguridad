@@ -3,11 +3,30 @@
 {% block page_title %}<i class="bi bi-search me-2"></i>Consulta de Registros{% endblock %}
 
 {% block content %}
+<style>
+  .filter-card {
+    animation: fadeUp .45s .05s cubic-bezier(0.16,1,.3,1) both;
+    border-radius: 14px;
+  }
+  .results-card {
+    animation: fadeUp .45s .2s cubic-bezier(0.16,1,.3,1) both;
+  }
+  /* Highlight on row hover with slide */
+  .table tbody tr {
+    cursor: default;
+  }
+  /* Badge count animation */
+  .result-count {
+    animation: scaleIn .4s .3s cubic-bezier(0.34,1.56,.64,1) both;
+    display: inline-block;
+  }
+</style>
+
 <!-- Filtros -->
-<div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+<div class="card border-0 shadow-sm mb-4 filter-card">
   <div class="card-body p-4">
     <h6 class="fw-semibold mb-3"><i class="bi bi-funnel me-2"></i>Filtros de búsqueda</h6>
-    <form method="get">
+    <form method="get" id="filterForm">
       <div class="row g-3">
         <div class="col-md-3">
           <label class="form-label small fw-semibold">{{ form.fecha_inicio.label }}</label>
@@ -43,9 +62,12 @@
 </div>
 
 <!-- Resultados -->
-<div class="table-card">
+<div class="table-card results-card">
   <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
-    <h6 class="mb-0 fw-semibold">Resultados <span class="badge bg-secondary ms-2">{{ registros|length }}</span></h6>
+    <h6 class="mb-0 fw-semibold">
+      Resultados
+      <span class="badge bg-secondary ms-2 result-count">{{ registros|length }}</span>
+    </h6>
   </div>
   <div class="table-responsive">
     <table class="table table-sm mb-0">
@@ -69,25 +91,16 @@
           <td class="text-muted small">{{ entrada.personal.dni }}</td>
           <td class="small">{{ entrada.hora_entrada|date:"d/m/Y H:i" }}</td>
           <td class="small">
-            {% if entrada.salida %}
-              {{ entrada.salida.hora_salida|date:"d/m/Y H:i" }}
-            {% else %}
-              <span class="text-muted">—</span>
-            {% endif %}
+            {% if entrada.salida %}{{ entrada.salida.hora_salida|date:"d/m/Y H:i" }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
           </td>
           <td class="small">
-            {% if entrada.salida %}
-              {{ entrada.salida.get_motivo_display }}
-            {% else %}
-              <span class="text-muted">—</span>
-            {% endif %}
+            {% if entrada.salida %}{{ entrada.salida.get_motivo_display }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
           </td>
           <td class="small">
-            {% if entrada.salida %}
-              {{ entrada.salida.area_destino.nombre }}
-            {% else %}
-              <span class="text-muted">—</span>
-            {% endif %}
+            {% if entrada.salida %}{{ entrada.salida.area_destino.nombre }}
+            {% else %}<span class="text-muted">—</span>{% endif %}
           </td>
           <td>
             {% if entrada.salida %}
@@ -99,8 +112,8 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="8" class="text-center text-muted py-4">
-            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+          <td colspan="8" class="text-center text-muted py-5">
+            <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
             No se encontraron registros con los filtros aplicados.
           </td>
         </tr>
